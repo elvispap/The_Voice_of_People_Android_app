@@ -1,0 +1,224 @@
+package com.hypercode.the_voice_of_people;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.example.maps.R;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+public class ProfileSettings extends Activity{
+	
+	private EditText location;
+	private LinearLayout interests;
+    private ArrayList<CheckBox> interestsArray;
+    //private CheckBox cb[]=new CheckBox[10]; 
+    
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.profile_settings);
+		location=(EditText)findViewById(R.id.location);
+        interests=(LinearLayout)findViewById(R.id.interests);
+		interestsArray = new ArrayList<CheckBox>();
+		//interest.setText("sports");
+		//interests.addView(interest);
+		GetXMLTask task = new GetXMLTask();
+        task.execute("http://10.0.2.2:8081/3w/profile_settings");
+		    
+        //location.setText("Chicago");
+        
+        }
+	protected void createProfileSettingsUI(String xml)
+    {
+    	try {
+			
+		    XmlPullParserFactory pullParserFactory = XmlPullParserFactory.newInstance();
+			XmlPullParser parser = pullParserFactory.newPullParser();
+
+		    InputStream in_s =  new ByteArrayInputStream(xml.getBytes("UTF-8"));
+	        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(in_s, null);
+            
+            int eventType = parser.getEventType();
+            
+            String tag;
+            
+           
+           
+//            for(int j = 0; j < 6; j++) {
+//                CheckBox cb1 = new CheckBox(this);
+//                cb1.setText("Dynamic Checkbox " + j);
+//                cb1.setId(j+6);
+//                interests.addView(cb1);
+//            }
+            int i=0;
+            String interestTitle="";
+            boolean interestChecked=false; 
+            while (eventType != XmlPullParser.END_DOCUMENT){
+            	
+            	 tag = parser.getName();
+                if( eventType == XmlPullParser.START_TAG){
+                	    System.out.println(tag);
+                        if (tag.equals("location"))
+                        {
+                            location.setText(parser.nextText());    
+                        } 
+                        else if (tag.equals("interest"))
+                        {
+                        	
+                        	System.out.println("interest");
+                        	
+                            
+                        }
+                        else if (tag.equals("title")){   
+                        	//System.out.println(parser.nextText());
+                        	interestTitle=parser.nextText();
+                        	//LinearLayout interestsLocal=(LinearLayout)findViewById(R.id.interests);
+                        	
+                        	
+                        } 
+                        else if (tag.equals("checked")){
+                        	i++;
+                        	//System.out.println(parser.nextText());
+                        	String value=parser.nextText();
+                        	if(value.equals("yes"))
+                        		interestChecked=true;
+                        	else
+                        		interestChecked=false;
+                        	
+                        	CheckBox cb1 = new CheckBox(this);
+                            cb1.setText(interestTitle);
+                            cb1.setChecked(interestChecked);
+                            cb1.setId(i+6);
+                            interests.addView(cb1);
+                            interestsArray.add(cb1);
+                        	//System.out.println("checked");
+                                      	                       	    
+                        }
+                        
+                }
+                eventType = parser.next();
+                
+            }  
+            int size=interest.size();
+            System.out.println(size);
+            
+
+	} catch (XmlPullParserException e) {
+
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+
+	}
+	private class GetXMLTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            String output = null;
+            for (String url : urls) {
+                output = getOutputFromUrl(url);
+            }
+            return output;
+        }
+ 
+        private String getOutputFromUrl(String url) {
+            StringBuffer output = new StringBuffer("");
+            try {
+                InputStream stream = getHttpConnection(url);
+                BufferedReader buffer = new BufferedReader(
+                        new InputStreamReader(stream));
+                String s = "";
+                while ((s = buffer.readLine()) != null)
+                    output.append(s);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return output.toString();
+        }
+ 
+        // Makes HttpURLConnection and returns InputStream
+        private InputStream getHttpConnection(String urlString)
+                throws IOException {
+            InputStream stream = null;
+            URL url = new URL(urlString);
+            URLConnection connection = url.openConnection();
+ 
+            try {
+                HttpURLConnection httpConnection = (HttpURLConnection) connection;
+                httpConnection.setRequestMethod("GET");
+                httpConnection.connect();
+ 
+                if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    stream = httpConnection.getInputStream();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return stream;
+        }
+ 
+        @Override
+        protected void onPostExecute(String output) {
+            
+        	System.out.println(output);
+        	createProfileSettingsUI(output);
+    			
+        }
+    }
+	
+	public boolean isConnected(){
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected())
+                return true;
+            else
+                return false;    
+    }
+	
+	
+
+}
+

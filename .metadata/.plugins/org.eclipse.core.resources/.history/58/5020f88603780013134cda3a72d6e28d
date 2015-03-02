@@ -1,0 +1,20 @@
+package com.wvr.widget;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+ 
+public class GIFView extends View {
+ 
+public GIFView(Context context) {
+super(context);
+}
+ 
+public GIFView(Context context, AttributeSet attrs) {
+super(context, attrs);
+}
+ 
+public GIFView(Context context, AttributeSet attrs, int defStyle) {
+super(context, attrs, defStyle);
+}
+ 
+}

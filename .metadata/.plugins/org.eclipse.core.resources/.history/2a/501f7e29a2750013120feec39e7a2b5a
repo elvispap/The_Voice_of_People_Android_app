@@ -1,0 +1,83 @@
+package com.hypercode.the_voice_of_people;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import android.app.Activity;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
+
+
+public class ServerConnection extends AsyncTask<String, Void, String> {
+	
+	public static String sendRecieveData(String url,ArrayList<NameValuePair> postParameters)
+	{
+		this.execute();
+		
+		
+		return "null";
+	}
+	
+	 @Override
+	 protected String doInBackground(String... urls) {
+		 
+         
+
+         return POST(urls[0],account);
+     }
+	
+	public static String POST(String url, SignupAccount account){
+        InputStream inputStream = null;
+        String result = "";
+        try {
+ 
+            // 1. create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+ 
+            // 2. make POST request to the given URL
+            HttpPost httpPost = new HttpPost(url);
+            
+            
+            
+            
+            httpPost.setEntity(new UrlEncodedFormEntity(postParameters));
+ 
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+ 
+        } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
+        }
+ 
+        // 11. return result
+        return result;	
+    }
+	public boolean isConnected(){
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected())
+                return true;
+            else
+                return false;    
+    }
+	
+      
+        
+       
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
+       }
+    }
+

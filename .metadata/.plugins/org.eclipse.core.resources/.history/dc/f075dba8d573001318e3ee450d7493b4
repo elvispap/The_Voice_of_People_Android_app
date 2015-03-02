@@ -1,0 +1,42 @@
+package com.hypercode.the_voice_of_people;
+
+import com.example.maps.R;
+import com.google.android.gms.internal.r;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+public class Login extends Activity {
+
+	Button login,signup;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.login_window);
+		
+		login= (Button) findViewById(R.id.login_button);
+		signup= (Button) findViewById(R.id.signup_button);
+		
+		login.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        signup.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+	}
+ 
+}

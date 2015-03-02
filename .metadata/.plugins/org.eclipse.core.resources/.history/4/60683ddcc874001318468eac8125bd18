@@ -1,0 +1,24 @@
+package com.hypercode.the_voice_of_people;
+
+public class SignupAccount {
+	
+	private String userName;
+	private String email;
+	private String password;
+	
+	SignupAccount(){
+		user_name=null;
+		email=null;
+		password=null;
+	}
+	void setUserName(String userName){
+		this.userName=userName;
+	}
+	void setEmail(String email){
+		this.email=email;
+	}
+	void setPassword(String password){
+		this.password=password;
+	}
+
+}
